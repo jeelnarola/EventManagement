@@ -1,4 +1,4 @@
-Event Management API Project Instructions
+# Event Management API Project Instructions
 
 Running the Server
     1. Start the server on PORT 9090. Ensure strict adherence to this port number.
