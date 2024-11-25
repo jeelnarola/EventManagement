@@ -1,0 +1,12 @@
+Back-Project Flow
+├── src
+|   ├── configs                                    
+|   |   ├── DatabaseeConnect.js                             
+|   ├── controllers
+|   ├── middlewares
+|   ├── models
+|   ├── routers 
+|   ├── index.js
+├── .env                               
+├── .gitignore
+├── package.json
