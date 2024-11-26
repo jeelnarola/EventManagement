@@ -90,18 +90,25 @@ const Eventrsvp = async(req,res)=>{
 
         const existingRsvp = await rsvp.findOne({ userId, eventId });
         if (existingRsvp == null) {
-            
-            let data = await rsvp.create({
-                userId, eventId,status,member:1
-            })
-            return res.status(200).json({ msg: 'RSVP Add successfully', rsvp: data });
-            
+            let RSVPData = await rsvp.find()
+            let CountData = 0;
+            for (const rsvpI of RSVPData) {
+                const DataRsvp = await rsvp.find({eventId:rsvpI.eventId})
+                CountData = DataRsvp.length;
+            }
+            if(EventFind.maxMember >= CountData){
+                let data = await rsvp.create({
+                    userId, eventId,status,member:1
+                })
+                return res.status(200).json({ msg: 'RSVP Add successfully' , rsvp:data});
+            }else{
+                return res.status(200).json({ msg: 'RSVP Not Add Because Member Full.'});
+            }
         }else if(existingRsvp){
             existingRsvp.status = status;
             await existingRsvp.save()
             sendMail(user.email,`Reminder: ${EventFind.title}`,`Hello, just a reminder that the event "${EventFind.title}" is happening on ${EventFind.date.toUTCString()}.`)
-            return res.status(200).json({ msg: 'RSVP updated successfully'});
-            
+            return res.status(200).json({ msg: 'Already Extis RSVP.'});    
         }
     } catch (error) {
         console.log("Error in rsvp controller", error.message);
@@ -112,14 +119,21 @@ const Eventrsvp = async(req,res)=>{
 const EventEdit = async(req,res)=>{
     try {
         let {id} = req.params;
+        let {userId} = req.body; 
         let Data= await Event.findOne({_id:id})
+        const rsvpData = await rsvp.find({eventId:id});
         if(Data == null ){
             return res.status(404).send({ success: false, message: 'Edit not found or unauthorized' });
         }
         if(Data.createdBy == req.user.id){
             let UpdateData = await Event.findByIdAndUpdate({_id:id,...req.body,createdBy:req.user.id})
+            for (const i of rsvpData){
+                let user = await User.find({_id:i.userId})
+                for(const j in user){
+                    sendMail(user[j].email,`Reminder: ${Data.title}`,`Hello, just a reminder that the event "${Data.title}" is happening on ${Data.date.toUTCString()}.`)
+                }
+            }
             return res.status(201).send({ success: true, message: 'updated successfully' ,UpData :UpdateData});
-
         }
     } catch (error) {
         console.log("Error in EventEdit controller", error.message);
