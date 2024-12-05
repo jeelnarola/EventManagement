@@ -9,6 +9,7 @@
 - Register And Login JWT use and cooike set.
 - CRUD operations performed by the User.
 - [ TAKE REFERENCE VISIT](https://github.com/jeelnarola/EventManagement/blob/master/Instruction.md)
+- ``` https://eventmanagement-hs5g.onrender.com ```
 <hr/>
 
 # Follow these instructions strictly
